@@ -78,7 +78,8 @@ decompress' wbits p0 = go p0 =<< liftIO (Z.initInflate wbits)
       case res of
          Left r -> return $ Right r
          Right (bs, p') -> do
-            fromPopper =<< liftIO (Z.feedInflate inf bs)
+            popper <- liftIO (Z.feedInflate inf bs)
+            fromPopper popper
             flush inf
             leftover <- liftIO $ Z.getUnusedInflate inf
             if B.null leftover
